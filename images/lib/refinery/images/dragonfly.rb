@@ -26,6 +26,11 @@ module Refinery
             processor :strip do |content|
               content.process!(:convert, '-strip')
             end
+            if Refinery::Images.dragonfly_use_local_cache
+              before_serve do |job, env|
+                job.to_file("#{Rails.root}/public#{app_images.server.url_for(job).sub(/?.*$/, '')}.#{job.ext}")
+              end
+            end
           end
 
           if ::Refinery::Images.s3_backend
